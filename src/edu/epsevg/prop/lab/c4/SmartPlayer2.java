@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package edu.epsevg.prop.lab.c4;
 
-/**
- *
- * @author jowiees
- */
 public class SmartPlayer2 implements Jugador, IAuto
 {
     private static final int MAX_DEPTH = 4;
@@ -37,7 +30,7 @@ public class SmartPlayer2 implements Jugador, IAuto
             return 0;
         }
 
-        int bestScore = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        int bestScore = 0;
 
         for (int col = 0; col < tauler.getMida(); col++) {
             if (tauler.movpossible(col)) {
@@ -53,11 +46,8 @@ public class SmartPlayer2 implements Jugador, IAuto
                 int score = minimax(clonedTauler, depth - 1, !isMax, currentColor, opponentColor);
                 
                 bestScore = isMax ? Math.max(bestScore, score) : Math.min(bestScore, score);
-
-                
             }
         }
-        System.out.println("minmax socre:" + bestScore);
         return bestScore;
     }
 
@@ -87,6 +77,13 @@ public class SmartPlayer2 implements Jugador, IAuto
                 }
             }
         }
+	if (bestMove == -1 ){
+		for (int col = 0; col < tauler.getMida(); col++) {
+			if (tauler.movpossible(col)) {
+				return col;
+			}
+		}
+	}
 
         return bestMove;
     }
