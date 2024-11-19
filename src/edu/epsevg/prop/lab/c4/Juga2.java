@@ -96,8 +96,8 @@ public class Juga2 extends javax.swing.JFrame {
 
         // Definiu al vostre gust els jugadors a enfrontar.
         //Jugador p1 = new SmartPlayer(8);
-        Jugador p1 = new Aleatori();
-        //Jugador p1 = new Profe(8,true);
+        //Jugador p1 = new Aleatori();
+        Jugador p1 = new Profe(8,true);
         //Jugador p1 = new Manual();
 
         //Jugador p2 = new Profe(8,true);

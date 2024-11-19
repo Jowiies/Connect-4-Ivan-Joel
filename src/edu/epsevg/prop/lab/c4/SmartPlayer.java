@@ -31,8 +31,8 @@ public class SmartPlayer implements Jugador, IAuto {
         long startTime = System.nanoTime();
         int move = findBestMove(t, color, color * -1);
         long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1_000_000_000; // Convertir a segons
-        System.out.println("Temps per decidir el moviment: " + duration + " segons");
+        double duration = (endTime - startTime) / 1_000_000_000.0; // Convertir a segons
+        System.out.printf("Temps per decidir el moviment: %.2f segons%n", duration);
         System.out.println("Nombre de nodes explorats: " + nodesExplorats);
         return move;
     }
