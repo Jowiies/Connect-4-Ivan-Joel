@@ -13,6 +13,7 @@ public class SmartPlayer implements Jugador, IAuto {
      * Constructor per al SmartPlayer.
      * 
      * @param limitProfunditat La profunditat màxima per a cercar amb l'algorisme MinMax.
+     * @param poda Activa o desactiva la poda alpha-beta.
      */
     public SmartPlayer(int limitProfunditat, boolean poda) {
         this.nom = "SmartPlayer";
