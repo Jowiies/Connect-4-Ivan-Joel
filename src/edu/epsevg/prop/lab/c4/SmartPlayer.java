@@ -5,20 +5,26 @@ package edu.epsevg.prop.lab.c4;
  */
 public class SmartPlayer implements Jugador, IAuto {
     private int limitProfunditat; // Profunditat màxima de cerca per a l'algorisme MinMax
+    
+    private final int arr[] = {4, 3, 5, 2, 1, 6, 0, 7}; //Ordre de middleTheBest
+    
     private String nom; // Nom del jugador
     private int nodesExplorats; // Nombre de nodes explorats durant la cerca del MinMax
     private boolean poda;
+    private boolean middleTheBest;
 
     /**
      * Constructor per al SmartPlayer.
      * 
      * @param limitProfunditat La profunditat màxima per a cercar amb l'algorisme MinMax.
      * @param poda Activa o desactiva la poda alpha-beta.
+     * @param middle Activa o desactiva la priorització en les columnes del mitg.
      */
-    public SmartPlayer(int limitProfunditat, boolean poda) {
+    public SmartPlayer(int limitProfunditat, boolean poda, boolean middle) {
         this.nom = "SmartPlayer";
         this.limitProfunditat = limitProfunditat;
         this.poda = poda;
+        this.middleTheBest = middle;
     }
 
     /**
@@ -68,8 +74,10 @@ public class SmartPlayer implements Jugador, IAuto {
             return heuristica(tauler, colorJugadorActiu, colorRival);
         
         int maxValue = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        
-        for (int col = 0; col < tauler.getMida(); col++) {
+        int col;
+        for (int i = 0; i < tauler.getMida(); i++) {
+            col = middleTheBest ? arr[i] : i;
+            
             if (tauler.movpossible(col)) {
                 
                 Tauler taulerSimulat = new Tauler(tauler);
@@ -87,7 +95,6 @@ public class SmartPlayer implements Jugador, IAuto {
                 
                 if (poda && beta <= alpha)
                     break;
-                
             }
         }
         
@@ -105,8 +112,11 @@ public class SmartPlayer implements Jugador, IAuto {
     private int findBestMove(Tauler tauler, int currentPlayerColor, int colorRival) {
         int valorMesAlt = Integer.MIN_VALUE;
         int columnaOptima = -1;
-
-        for (int col = 0; col < tauler.getMida(); col++) {
+        int col;
+        for (int i = 0; i < tauler.getMida(); i++) {
+            
+            col = middleTheBest ? arr[i] : i;
+            
             if (tauler.movpossible(col)) {
                 Tauler taulerSimulat = new Tauler(tauler);
                 taulerSimulat.afegeix(col, currentPlayerColor);
@@ -123,11 +133,10 @@ public class SmartPlayer implements Jugador, IAuto {
                 }
             }
         }
+        
         if (columnaOptima == -1) {
-            for (int col = 0; col < tauler.getMida(); col++) {
-                if (tauler.movpossible(col)) {
-                    return col;
-                }
+            for (int c = 0; c < tauler.getMida(); c++) {
+                if (tauler.movpossible(c)) return c;
             }
         }
 
