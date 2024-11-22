@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 /build/
 /dist/
 /nbproject/private/
+=======
+/nbproject/private/
+/build/
+/dist/
+>>>>>>> master
