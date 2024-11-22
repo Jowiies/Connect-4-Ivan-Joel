@@ -7,15 +7,17 @@ public class SmartPlayer implements Jugador, IAuto {
     private int limitProfunditat; // Profunditat màxima de cerca per a l'algorisme MinMax
     private String nom; // Nom del jugador
     private int nodesExplorats; // Nombre de nodes explorats durant la cerca del MinMax
+    private boolean poda;
 
     /**
      * Constructor per al SmartPlayer.
      * 
      * @param limitProfunditat La profunditat màxima per a cercar amb l'algorisme MinMax.
      */
-    public SmartPlayer(int limitProfunditat) {
+    public SmartPlayer(int limitProfunditat, boolean poda) {
         this.nom = "SmartPlayer";
         this.limitProfunditat = limitProfunditat;
+        this.poda = poda;
     }
 
     /**
@@ -59,54 +61,36 @@ public class SmartPlayer implements Jugador, IAuto {
      * @param colorRival El color del jugador rival.
      * @return El valor heurístic de l'estat del tauler.
      */
-    private int MinMax(Tauler tauler, int depth, int alpha, int beta, boolean isMax, int colorJugadorActiu, int colorRival) {
-        if (depth == 0 || !tauler.espotmoure()) {
+    private int MinMax(Tauler tauler, int depth, int alpha, int beta, boolean isMax, int colorJugadorActiu, int colorRival) 
+    {
+        if (depth == 0 || !tauler.espotmoure())
             return heuristica(tauler, colorJugadorActiu, colorRival);
-        }
-
-        if (isMax) {
-            int valorMesAlt = Integer.MIN_VALUE;
-            for (int col = 0; col < tauler.getMida(); col++) {
-                if (tauler.movpossible(col)) {
-                    Tauler taulerSimulat = new Tauler(tauler);
-                    taulerSimulat.afegeix(col, colorJugadorActiu);
-
-                    if (taulerSimulat.solucio(col, colorJugadorActiu)) {
-                        return Integer.MAX_VALUE;
-                    }
-
-                    int avaluacioActual = MinMax(taulerSimulat, depth - 1, alpha, beta, false, colorJugadorActiu, colorRival);
-                    valorMesAlt = Math.max(valorMesAlt, avaluacioActual);
-                    alpha = Math.max(alpha, valorMesAlt);
-
-                    if (beta <= alpha) {
-                        break;
-                    }
-                }
+        
+        int maxValue = isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        
+        for (int col = 0; col < tauler.getMida(); col++) {
+            if (tauler.movpossible(col)) {
+                
+                Tauler taulerSimulat = new Tauler(tauler);
+                taulerSimulat.afegeix(col, isMax ? colorJugadorActiu : colorRival);
+                
+                if (taulerSimulat.solucio(col, isMax ? colorJugadorActiu : colorRival))
+                    return isMax ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+                
+                int avaluacioActual = MinMax(taulerSimulat, depth - 1, alpha, beta, !isMax, colorJugadorActiu, colorRival);
+                maxValue = isMax ? Math.max(maxValue, avaluacioActual) : Math.min(maxValue, avaluacioActual);
+                
+                alpha = isMax ? Math.max(alpha, maxValue) : alpha;
+                
+                beta = isMax ? beta : Math.min(beta, maxValue);
+                
+                if (poda && beta <= alpha)
+                    break;
+                
             }
-            return valorMesAlt;
-        } else {
-            int valorMesAlt = Integer.MAX_VALUE;
-            for (int col = 0; col < tauler.getMida(); col++) {
-                if (tauler.movpossible(col)) {
-                    Tauler taulerSimulat = new Tauler(tauler);
-                    taulerSimulat.afegeix(col, colorRival);
-
-                    if (taulerSimulat.solucio(col, colorRival)) {
-                        return Integer.MIN_VALUE;
-                    }
-
-                    int avaluacioActual = MinMax(taulerSimulat, depth - 1, alpha, beta, true, colorJugadorActiu, colorRival);
-                    valorMesAlt = Math.min(valorMesAlt, avaluacioActual);
-                    beta = Math.min(beta, valorMesAlt);
-
-                    if (beta <= alpha) {
-                        break;
-                    }
-                }
-            }
-            return valorMesAlt;
         }
+        
+        return maxValue;
     }
 
     /**
